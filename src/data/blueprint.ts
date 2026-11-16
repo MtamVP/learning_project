@@ -1,0 +1,316 @@
+import { BlueprintNode } from '../types';
+
+export const PROJECT_BLUEPRINT: BlueprintNode[] = [
+  {
+    path: 'masvn-intelligence/',
+    name: 'masvn-intelligence/',
+    type: 'dir',
+    depth: 0,
+    role: {
+      vi: 'Thư mục gốc của toàn bộ dự án MASVN Market Intelligence Engine.',
+      en: 'Root directory of the MASVN Market Intelligence Engine project.',
+    },
+  },
+  {
+    path: 'masvn-intelligence/data/',
+    name: 'data/',
+    type: 'dir',
+    depth: 1,
+    role: {
+      vi: 'Chứa dữ liệu thô (PDF), tập ảnh gán nhãn YOLO, dữ liệu đã làm sạch (CSV/JSON) và chỉ mục vector.',
+      en: 'Stores raw PDFs, Roboflow YOLO datasets, processed CSV/JSON, and persisted vector indices.',
+    },
+  },
+  {
+    path: 'masvn-intelligence/data/raw_pdfs/',
+    name: 'raw_pdfs/',
+    type: 'dir',
+    depth: 2,
+    role: {
+      vi: 'Lưu các file PDF bản tin chứng khoán MASVN tải tự động theo ngày (report_YYYYMMDD.pdf).',
+      en: 'Stores daily MASVN market report PDFs downloaded by the Playwright scraper (report_YYYYMMDD.pdf).',
+    },
+    linkedStepId: '1.1',
+  },
+  {
+    path: 'masvn-intelligence/data/yolo_dataset/',
+    name: 'yolo_dataset/',
+    type: 'dir',
+    depth: 2,
+    role: {
+      vi: 'Tập ảnh và file nhãn .txt tải từ Roboflow (train/val/test) dùng để huấn luyện YOLOv11n.',
+      en: 'Image and YOLO .txt label dataset exported from Roboflow (train/val/test) for YOLOv11n.',
+    },
+    linkedStepId: '2.2',
+  },
+  {
+    path: 'masvn-intelligence/data/processed/',
+    name: 'processed/',
+    type: 'dir',
+    depth: 2,
+    role: {
+      vi: 'Thư mục đầu ra của giai đoạn trích xuất lai (Hybrid Parsing), chứa dữ liệu sạch cho ML và RAG.',
+      en: 'Output folder of the hybrid parser containing clean datasets for ML and RAG.',
+    },
+  },
+  {
+    path: 'masvn-intelligence/data/processed/stock_metrics.csv',
+    name: 'stock_metrics.csv',
+    type: 'file',
+    depth: 3,
+    role: {
+      vi: 'Bảng số liệu tổng hợp Top 100 mã & VN30 từ nhiều ngày bản tin (~2,000 dòng) để huấn luyện LightGBM.',
+      en: 'Aggregated financial metrics table for Top 100 & VN30 stocks (~2,000 rows) used to train LightGBM.',
+    },
+    linkedStepId: '3.5',
+  },
+  {
+    path: 'masvn-intelligence/data/processed/market_knowledge.json',
+    name: 'market_knowledge.json',
+    type: 'file',
+    depth: 3,
+    role: {
+      vi: 'Kho văn bản nhận định thị trường, tin tức doanh nghiệp và bảng vĩ mô đã chuyển thành câu văn cho RAG.',
+      en: 'Normalized knowledge base of market commentary, corporate news, and serialized macro tables for RAG.',
+    },
+    linkedStepId: '3.4',
+  },
+  {
+    path: 'masvn-intelligence/data/vector_store/',
+    name: 'vector_store/',
+    type: 'dir',
+    depth: 2,
+    role: {
+      vi: 'Lưu chỉ mục tìm kiếm cứng trên ổ đĩa: faiss.index (dense) và bm25.pkl (sparse).',
+      en: 'Persists search indices on disk: faiss.index (dense) and bm25.pkl (sparse).',
+    },
+    linkedStepId: '5.2',
+  },
+  {
+    path: 'masvn-intelligence/notebooks/',
+    name: 'notebooks/',
+    type: 'dir',
+    depth: 1,
+    role: {
+      vi: 'Các Jupyter Notebook thử nghiệm, chuẩn bị dữ liệu và huấn luyện mô hình trên VS Code / Google Colab.',
+      en: 'Jupyter Notebooks for experimentation, dataset preparation, and model training on VS Code / Colab.',
+    },
+  },
+  {
+    path: 'masvn-intelligence/notebooks/01_pdf_to_images.ipynb',
+    name: '01_pdf_to_images.ipynb',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Xuất 15–20 file PDF (chia tách theo file trước để chống rò rỉ) thành ~180 ảnh .jpg upload Roboflow.',
+      en: 'Converts 15–20 PDFs (split by document first to prevent leakage) into ~180 .jpg pages for Roboflow.',
+    },
+    linkedStepId: '2.1',
+  },
+  {
+    path: 'masvn-intelligence/notebooks/02_train_yolo_colab.ipynb',
+    name: '02_train_yolo_colab.ipynb',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Huấn luyện YOLOv11n nhận diện 3 lớp (Table, Text, Figure) trên Google Colab T4 GPU.',
+      en: 'Trains YOLOv11n for 3 layout classes (Table, Text, Figure) on Google Colab T4 GPU.',
+    },
+    linkedStepId: '2.3',
+  },
+  {
+    path: 'masvn-intelligence/notebooks/03_build_datasets.ipynb',
+    name: '03_build_datasets.ipynb',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Chạy hàng loạt YOLO + PyMuPDF/PaddleOCR qua raw_pdfs/ để tạo stock_metrics.csv và market_knowledge.json.',
+      en: 'Batch-processes raw_pdfs/ with YOLO + PyMuPDF/PaddleOCR to generate stock_metrics.csv and market_knowledge.json.',
+    },
+    linkedStepId: '3.5',
+  },
+  {
+    path: 'masvn-intelligence/notebooks/04_train_ml_scorer.ipynb',
+    name: '04_train_ml_scorer.ipynb',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'EDA, tiền xử lý ColumnTransformer (SimpleImputer + StandardScaler) và huấn luyện LightGBM.',
+      en: 'Runs EDA, builds anti-leakage ColumnTransformer pipeline, and trains the LightGBM classifier.',
+    },
+    linkedStepId: '4.3',
+  },
+  {
+    path: 'masvn-intelligence/models/',
+    name: 'models/',
+    type: 'dir',
+    depth: 1,
+    role: {
+      vi: 'Lưu các file trọng số mô hình đã huấn luyện xong để ứng dụng local load trực tiếp.',
+      en: 'Stores trained model artifacts loaded at inference time by the local application.',
+    },
+  },
+  {
+    path: 'masvn-intelligence/models/yolo_masvn_layout.pt',
+    name: 'yolo_masvn_layout.pt',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Trọng số YOLOv11n tải từ Colab (best.pt) dùng để khoanh vùng Table, Text, Figure (~0.3GB VRAM).',
+      en: 'YOLOv11n weights downloaded from Colab (best.pt) to detect Table, Text, and Figure (~0.3GB VRAM).',
+    },
+    linkedStepId: '2.4',
+  },
+  {
+    path: 'masvn-intelligence/models/stock_scorer.pkl',
+    name: 'stock_scorer.pkl',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Pipeline Scikit-Learn + LightGBM đóng gói bằng joblib, chấm điểm cổ phiếu trong <10ms.',
+      en: 'Joblib-serialized Scikit-Learn + LightGBM pipeline scoring stocks in <10ms.',
+    },
+    linkedStepId: '4.4',
+  },
+  {
+    path: 'masvn-intelligence/scripts/',
+    name: 'scripts/',
+    type: 'dir',
+    depth: 1,
+    role: {
+      vi: 'Chứa các script chạy dòng lệnh (Batch scripts) phục vụ thu thập dữ liệu định kỳ.',
+      en: 'Contains standalone CLI batch scripts for scheduled data collection.',
+    },
+  },
+  {
+    path: 'masvn-intelligence/scripts/scrape_masvn.py',
+    name: 'scrape_masvn.py',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Script Playwright tự động bấm "Tải thêm", giải mã 2 định dạng link MASVN và tải PDF về data/raw_pdfs/.',
+      en: 'Playwright automation script clicking "Load more", parsing 2 MASVN URL formats, and saving PDFs.',
+    },
+    linkedStepId: '1.7',
+  },
+  {
+    path: 'masvn-intelligence/src/',
+    name: 'src/',
+    type: 'dir',
+    depth: 1,
+    role: {
+      vi: 'Mã nguồn lõi dạng module Python chạy local trên VS Code và được app.py gọi trực tiếp.',
+      en: 'Core modular Python source code executed locally and imported by app.py.',
+    },
+  },
+  {
+    path: 'masvn-intelligence/src/__init__.py',
+    name: '__init__.py',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Đánh dấu src/ là một Python package hợp lệ để import sạch giữa các module.',
+      en: 'Marks src/ as a valid Python package for clean relative/absolute imports.',
+    },
+    linkedStepId: '6.4',
+  },
+  {
+    path: 'masvn-intelligence/src/scraper.py',
+    name: 'scraper.py',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Module tùy chọn cho phép nút trên Sidebar của Streamlit gọi download_latest_report() tải ngay bản tin mới nhất.',
+      en: 'Optional UI-callable module exporting download_latest_report() for the Streamlit sidebar button.',
+    },
+    linkedStepId: '1.8',
+  },
+  {
+    path: 'masvn-intelligence/src/extractor.py',
+    name: 'extractor.py',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Bộ bóc tách lai (Hybrid Parser): YOLO + PyMuPDF (PDF số) hoặc Lazy-loaded PaddleOCR (PDF scan/ảnh).',
+      en: 'Hybrid Parser combining YOLO + PyMuPDF (digital PDF) or lazy-loaded PaddleOCR (scanned PDF/image).',
+    },
+    linkedStepId: '3.2',
+  },
+  {
+    path: 'masvn-intelligence/src/table_parser.py',
+    name: 'table_parser.py',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Gom từ theo dòng/cột (y_tolerance=5px), phân loại bảng cổ phiếu lớn (ML) vs bảng vĩ mô nhỏ (RAG).',
+      en: 'Clusters words into rows/columns (y_tolerance=5px) and routes stock tables (ML) vs macro tables (RAG).',
+    },
+    linkedStepId: '3.4',
+  },
+  {
+    path: 'masvn-intelligence/src/ml_scorer.py',
+    name: 'ml_scorer.py',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Load stock_scorer.pkl, chấm điểm danh sách cổ phiếu và trả về xác suất cùng yếu tố giải thích.',
+      en: 'Loads stock_scorer.pkl, scores parsed stock tables, and returns probabilities & feature explanations.',
+    },
+    linkedStepId: '4.4',
+  },
+  {
+    path: 'masvn-intelligence/src/rag_engine.py',
+    name: 'rag_engine.py',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Hybrid Search (BM25 + FAISS CPU) kết hợp Ollama (qwen2.5:7b) và System Prompt chống bịa đặt.',
+      en: 'Hybrid Search (BM25 + FAISS CPU) paired with local Ollama (qwen2.5:7b) and strict citation prompting.',
+    },
+    linkedStepId: '5.4',
+  },
+  {
+    path: 'masvn-intelligence/src/utils.py',
+    name: 'utils.py',
+    type: 'file',
+    depth: 2,
+    role: {
+      vi: 'Hàm làm sạch chuỗi số (#N/A, dấu phẩy, %), dọn VRAM GPU (gc.collect + torch.cuda.empty_cache).',
+      en: 'Numeric string cleaners (#N/A, commas, %) and GPU VRAM cleanup (gc.collect + torch.cuda.empty_cache).',
+    },
+    linkedStepId: '3.3',
+  },
+  {
+    path: 'masvn-intelligence/app.py',
+    name: 'app.py',
+    type: 'file',
+    depth: 1,
+    role: {
+      vi: 'Giao diện Streamlit 2 Tab: Tab 1 (Phân tích & Chấm điểm cổ phiếu), Tab 2 (Trợ lý Hỏi đáp AI).',
+      en: '2-Tab Streamlit web UI: Tab 1 (Stock Scoring Dashboard) and Tab 2 (Grounded AI Assistant).',
+    },
+    linkedStepId: '6.1',
+  },
+  {
+    path: 'masvn-intelligence/requirements.txt',
+    name: 'requirements.txt',
+    type: 'file',
+    depth: 1,
+    role: {
+      vi: 'Danh sách phiên bản các thư viện Python của dự án để cài đặt lại nhanh chóng.',
+      en: 'Pinned Python package dependencies for reproducible local environment setup.',
+    },
+    linkedStepId: '6.3',
+  },
+  {
+    path: 'masvn-intelligence/README.md',
+    name: 'README.md',
+    type: 'file',
+    depth: 1,
+    role: {
+      vi: 'Tài liệu kiến trúc hệ thống, hướng dẫn cài đặt Ollama/Playwright và bảng đo hiệu năng thực tế.',
+      en: 'Architecture docs, setup instructions for Ollama/Playwright, and measured benchmark table.',
+    },
+    linkedStepId: '6.3',
+  },
+];
